@@ -12,6 +12,7 @@ import {
   Button,
   List,
   ListItemText,
+  CircularProgress,
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/SearchOutlined";
 import PersonAddIcon from "@material-ui/icons/PersonAddOutlined";
@@ -21,9 +22,19 @@ import { Tweet } from "../../components/Tweet";
 import { SideMenu } from "../../components/SideMenu";
 import { AddTweetForm } from "../../components/AddTweetForm";
 import { SearchTextField } from "../../components/SearchTextField";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchTweets } from "../../store/ducks/tweets/actionCreators";
+import { selectIsTweetsLoading, selectTweetsItems } from "../../store/ducks/tweets/selectors";
 
 export const Home = (): React.ReactElement => {
   const classes = useHomeStyles();
+  const dispatch = useDispatch();
+  const tweets = useSelector(selectTweetsItems);
+  const isLoading = useSelector(selectIsTweetsLoading);
+
+  React.useEffect(() => {
+    dispatch(fetchTweets());
+  }, [dispatch]);
 
   return (
     <Container className={classes.wrapper} maxWidth="lg">
@@ -42,20 +53,18 @@ export const Home = (): React.ReactElement => {
               </div>
               <div className={classes.addFormBottomLine} />
             </Paper>
-            {[
-              ...new Array(20).fill(
+            {isLoading ? (
+             <div className={classes.tweetsCentered}> <CircularProgress /></div>
+            ) : (
+              tweets.map((tweet) => (
                 <Tweet
-                  text="The following npm package, @material-ui/icons, includes the 1,100+ official Material icons converted to SvgIcon components."
+                  key={tweet._id}
+                  text={tweet.text}
                   classes={classes}
-                  user={{
-                    fullname: "Alex Norvag",
-                    username: "nxrvlg",
-                    avatarUrl:
-                      "https://sun9-70.userapi.com/c625831/v625831627/b6d5/dlw-cJw2PTk.jpg",
-                  }}
+                  user={tweet.user}
                 />
-              ),
-            ]}
+              ))
+            )}
           </Paper>
         </Grid>
         <Grid sm={3} md={3} item>
