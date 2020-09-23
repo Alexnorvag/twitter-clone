@@ -7,8 +7,11 @@ export const TweetsApi = {
     return data;
   },
   async fetchTweetData(id: string): Promise<Tweet[]> {
-    console.log('id: ', id)
     const { data } = await axios.get("/tweets?_id=" + id);
+    return data;
+  },
+  async addTweet(payload: Tweet): Promise<Tweet> {
+    const { data } = await axios.post("/tweets", payload);
     return data;
   },
 };
