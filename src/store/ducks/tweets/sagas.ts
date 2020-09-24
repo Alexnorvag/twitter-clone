@@ -2,12 +2,12 @@ import { call, put, takeLatest } from "redux-saga/effects";
 import { TweetsApi } from "../../../services/api/tweetsApi";
 import {
   addTweet,
-  FetchAddTweetActionInterface,
+  setAddFormState,
   setTweets,
   setTweetsLoadingState,
-  TweetsActionsType,
 } from "./actionCreators";
-import { LoadingState, Tweet } from "./contracts/state";
+import { FetchAddTweetActionInterface, TweetsActionsType } from "./contracts/actionTypes";
+import { AddFormState, LoadingState, Tweet } from "./contracts/state";
 
 export function* fetchTweetsRequest() {
   try {
@@ -24,16 +24,16 @@ export function* fetchAddTweetRequest({ payload }: FetchAddTweetActionInterface)
       _id: Math.random().toString(36).substr(2),
       text: payload,
       user: {
-        fullname: "Великое колено† ЕГЭ",
-        username: "great_knee",
+        fullname: "Alex Norvag",
+        username: "nxrvlg",
         avatarUrl:
-          "https://pbs.twimg.com/profile_images/1295595986744737793/BIrFOfE7_bigger.jpg",
+          "https://sun9-70.userapi.com/c625831/v625831627/b6d5/dlw-cJw2PTk.jpg",
       },
     };
     const item = yield call(TweetsApi.addTweet, data);
     yield put(addTweet(item));
   } catch (error) {
-    yield put(setTweetsLoadingState(LoadingState.ERROR));
+    yield put(setAddFormState(AddFormState.ERROR));
   }
 }
 

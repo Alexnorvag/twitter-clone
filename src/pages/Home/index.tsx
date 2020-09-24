@@ -33,7 +33,6 @@ import { Tags } from "../../components/Tags";
 import { Route } from "react-router-dom";
 import { BackButton } from "../../components/BackButton";
 import { FullTweet } from "./components/FullTweet";
-import { fetchTweetData } from "../../store/ducks/tweet/actionCreators";
 
 export const Home = (): React.ReactElement => {
   const classes = useHomeStyles();
@@ -44,7 +43,6 @@ export const Home = (): React.ReactElement => {
   React.useEffect(() => {
     dispatch(fetchTweets());
     dispatch(fetchTags());
-    dispatch(fetchTweetData('5f69c5fdebcbf038380e872f'));
   }, [dispatch]);
 
   return (
@@ -59,6 +57,7 @@ export const Home = (): React.ReactElement => {
               <Route path="/home/:any">
                 <BackButton />
               </Route>
+
               <Route exact path={["/home", "/home/search"]}>
                 <Typography variant="h6">Твиты</Typography>
               </Route>

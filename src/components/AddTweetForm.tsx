@@ -6,12 +6,15 @@ import {
   IconButton,
   TextareaAutosize,
 } from "@material-ui/core";
+import Alert from "@material-ui/lab/Alert";
 import ImageOutlinedIcon from "@material-ui/icons/ImageOutlined";
 import EmojiIcon from "@material-ui/icons/SentimentSatisfiedOutlined";
 import classNames from "classnames";
 import { useHomeStyles } from "../pages/Home/theme";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchAddTweet } from "../store/ducks/tweets/actionCreators";
+import { selectAddFormState } from "../store/ducks/tweets/selectors";
+import { AddFormState } from "../store/ducks/tweets/contracts/state";
 
 interface AddTweetFormProps {
   classes: ReturnType<typeof useHomeStyles>;
@@ -26,6 +29,8 @@ export const AddTweetForm: React.FC<AddTweetFormProps> = ({
 }: AddTweetFormProps): React.ReactElement => {
   const dispatch = useDispatch();
   const [text, setText] = React.useState<string>("");
+
+  const addFormState = useSelector(selectAddFormState);
   const textLimitPercent = Math.round((text.length / MAX_LENGTH) * 100);
   const textCount = MAX_LENGTH - text.length;
 
@@ -36,12 +41,12 @@ export const AddTweetForm: React.FC<AddTweetFormProps> = ({
   };
 
   const handleClickAddTweet = (): void => {
-    dispatch(fetchAddTweet(text)); 
+    dispatch(fetchAddTweet(text));
     setText("");
   };
 
   return (
-    <div className={classes.addForm}>
+    <div>
       <div className={classes.addFormBody}>
         <Avatar
           className={classes.tweetAvatar}
@@ -96,14 +101,26 @@ export const AddTweetForm: React.FC<AddTweetFormProps> = ({
           )}
           <Button
             onClick={handleClickAddTweet}
-            disabled={text.length >= MAX_LENGTH}
+            disabled={addFormState === AddFormState.LOADING || !text || text.length >= MAX_LENGTH}
             color="primary"
             variant="contained"
           >
-            Твитнуть
+            {addFormState === AddFormState.LOADING ? (
+              <CircularProgress color="inherit" size={16} />
+            ) : (
+              "Твитнуть"
+            )}
           </Button>
         </div>
       </div>
+      {addFormState === AddFormState.ERROR && (
+        <Alert severity="error">
+          Ошибка при добавлении твита
+          <span role="img" aria-label="sad">
+            😞
+          </span>
+        </Alert>
+      )}
     </div>
   );
 };
